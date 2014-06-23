@@ -1,18 +1,19 @@
 /// <reference path="LogLevel.ts"/>
+/// <reference path="LoggerConfig.ts"/>
 
 module Logr
 {
 	export class LogEvent
 	{
-		private _loggerName:string;
-		get loggerName():string
+		private _loggerConfig:LoggerConfig;
+		get loggerConfig():LoggerConfig
 		{
-			return this._loggerName;
+			return this._loggerConfig;
 		}
 
-		set loggerName(value:string)
+		set loggerConfig(value:LoggerConfig)
 		{
-			this._loggerName = value;
+			this._loggerConfig = value;
 		}
 
 		
@@ -61,6 +62,25 @@ module Logr
 		set additionalData(value:any[])
 		{
 			this._additionalData = value;
+		}
+
+
+		constructor(loggerConfig:LoggerConfig, timestamp:number, message:string)
+		{
+			if(loggerConfig)
+			{
+				this._loggerConfig = loggerConfig;
+			}
+
+			if(timestamp)
+			{
+				this._timestamp = timestamp;
+			}
+
+			if(message)
+			{
+				this._message = message;
+			}
 		}
 	}
 }

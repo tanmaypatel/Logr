@@ -1,14 +1,25 @@
 var Logr;
 (function (Logr) {
     var LogEvent = (function () {
-        function LogEvent() {
+        function LogEvent(loggerConfig, timestamp, message) {
+            if (loggerConfig) {
+                this._loggerConfig = loggerConfig;
+            }
+
+            if (timestamp) {
+                this._timestamp = timestamp;
+            }
+
+            if (message) {
+                this._message = message;
+            }
         }
-        Object.defineProperty(LogEvent.prototype, "loggerName", {
+        Object.defineProperty(LogEvent.prototype, "loggerConfig", {
             get: function () {
-                return this._loggerName;
+                return this._loggerConfig;
             },
             set: function (value) {
-                this._loggerName = value;
+                this._loggerConfig = value;
             },
             enumerable: true,
             configurable: true
