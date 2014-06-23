@@ -2,17 +2,9 @@ var Logr;
 (function (Logr) {
     var LogEvent = (function () {
         function LogEvent(loggerConfig, timestamp, message) {
-            if (loggerConfig) {
-                this._loggerConfig = loggerConfig;
-            }
-
-            if (timestamp) {
-                this._timestamp = timestamp;
-            }
-
-            if (message) {
-                this._message = message;
-            }
+            this._loggerConfig = loggerConfig;
+            this._timestamp = timestamp;
+            this._message = message;
         }
         Object.defineProperty(LogEvent.prototype, "loggerConfig", {
             get: function () {

@@ -34,9 +34,10 @@ module Logr
 			this._logStackTraceForErrors = value;
 		}
 		
-		constructor(name:string)
+		constructor(name:string, level:LogLevel)
 		{
 			this._name = name;
+			this._level = level;
 		}
 	}
 }

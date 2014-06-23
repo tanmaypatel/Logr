@@ -1,8 +1,9 @@
 var Logr;
 (function (Logr) {
     var LoggerConfig = (function () {
-        function LoggerConfig(name) {
+        function LoggerConfig(name, level) {
             this._name = name;
+            this._level = level;
         }
         Object.defineProperty(LoggerConfig.prototype, "name", {
             get: function () {

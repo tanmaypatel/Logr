@@ -67,20 +67,9 @@ module Logr
 
 		constructor(loggerConfig:LoggerConfig, timestamp:number, message:string)
 		{
-			if(loggerConfig)
-			{
-				this._loggerConfig = loggerConfig;
-			}
-
-			if(timestamp)
-			{
-				this._timestamp = timestamp;
-			}
-
-			if(message)
-			{
-				this._message = message;
-			}
+			this._loggerConfig = loggerConfig;
+			this._timestamp = timestamp;
+			this._message = message;
 		}
 	}
 }
