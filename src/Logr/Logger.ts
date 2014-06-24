@@ -1,6 +1,7 @@
 /// <reference path="LogLevel.ts"/>
 /// <reference path="LoggerConfig.ts"/>
 /// <reference path="LogEvent.ts"/>
+/// <reference path="Utils/DateTimeUtils.ts"/>
 
 module Logr
 {
@@ -21,8 +22,7 @@ module Logr
 		
 		private log(level:LogLevel, message:string, ...args:any[]):void
 		{
-			var timestampForNow:number = Date.now ? Date.now() : new Date().getTime();
-			var logEvent = new LogEvent(this.loggerConfig, timestampForNow, message);
+			var logEvent = new LogEvent(this.loggerConfig, Utils.DateTimeUtils.now(), message);
 		}
 	}
 }
