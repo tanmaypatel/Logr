@@ -1,7 +1,6 @@
 define([ 'mocha', 
          'chai', 
-         'sinon', 
-         'Logr/LogLevel' ], 
+         'sinon' ], 
  function(mocha, chai, sinon)
  {
 	describe('LogLevel', function()

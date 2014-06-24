@@ -36,7 +36,8 @@ requirejs.config({
 require(['chai', 
          'mocha', 
          'sinon', 
-         'sinon-chai' ],
+         'sinon-chai',
+         'Logr'],
 
 function(chai, mocha, sinon, sinonChai) 
 {
@@ -50,7 +51,8 @@ function(chai, mocha, sinon, sinonChai)
 	mocha.bail(false);
 	
 	require([ '../test/spec/Logr/LogLevel.spec',
-	          '../test/spec/Logr/Utils/DateTimeUtils.spec' ], 
+	          '../test/spec/Logr/Utils/DateTimeUtils.spec',
+	          '../test/spec/Logr/Manager.spec'], 
 	function()
 	{
 		mocha.run();

@@ -1,7 +1,6 @@
 define([ 'mocha', 
          'chai', 
-         'sinon', 
-         'Logr/Utils/DateTimeUtils' ], 
+         'sinon' ], 
  function(mocha, chai, sinon)
  {
 	var DateTimeUtils = Logr.Utils.DateTimeUtils;
