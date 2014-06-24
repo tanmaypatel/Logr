@@ -5,7 +5,7 @@ var Logr;
             this._name = '';
             this._level = Logr.LogLevel.ALL;
             this._enabled = true;
-            this._logStackTraceForErrors = false;
+            this._logStackTraceForErrors = true;
             this._publishers = [];
             this._name = name;
             this._parentLoggerConfig = parentLoggerConfig;

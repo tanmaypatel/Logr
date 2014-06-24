@@ -43,7 +43,7 @@ module Logr
 		}
 		
 		
-		private _logStackTraceForErrors:boolean = false;
+		private _logStackTraceForErrors:boolean = true;
 		get logStackTraceForErrors():boolean
 		{
 			return this._logStackTraceForErrors;
