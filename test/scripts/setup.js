@@ -44,7 +44,8 @@ function(chai, mocha, sinon, sinonChai)
 	mocha.setup('bdd');
 	mocha.bail(false);
 	
-	require([ '../test/spec/Logr/LogLevel.spec' ], 
+	require([ '../test/spec/Logr/LogLevel.spec',
+	          '../test/spec/Logr/Utils/DateTimeUtils.spec' ], 
 	function()
 	{
 		mocha.run();
