@@ -14,9 +14,9 @@ module Logr
 		}
 
 
-		constructor(name:string, level:LogLevel)
+		constructor(loggerConfig:LoggerConfig)
 		{
-			this._loggerConfig = new LoggerConfig(name, level);
+			this._loggerConfig = loggerConfig;
 		}
 		
 		
