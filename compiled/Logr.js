@@ -271,6 +271,10 @@ var Logr;
 
             return logger;
         };
+
+        Manager.getDefaultConfig = function () {
+            return Manager._rootLoggerConfig;
+        };
         Manager._rootLoggerConfig = new Logr.LoggerConfig('', null, Logr.LogLevel.ALL);
 
         Manager._rootLogger = new Logr.Logger(Manager._rootLoggerConfig);

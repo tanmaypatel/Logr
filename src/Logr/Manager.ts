@@ -44,5 +44,10 @@ module Logr
 			
 			return logger;
 		}
+		
+		static getDefaultConfig():LoggerConfig
+		{
+			return Manager._rootLoggerConfig;
+		}
 	}
 }
