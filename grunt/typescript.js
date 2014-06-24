@@ -1,7 +1,7 @@
 module.exports = {
 	development: {
 		src: ['<%= srcLocation %>/**/*.ts'],
-        dest: '<%= compiledLocation %>',
+        dest: '<%= compiledLocation %>/Logr.js',
         options: {
         	basePath: '<%= srcLocation %>',
             module: 'amd',
