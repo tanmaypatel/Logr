@@ -2,6 +2,9 @@ var Logr;
 (function (Logr) {
     var LoggerConfig = (function () {
         function LoggerConfig(name, level) {
+            this._level = Logr.LogLevel.ALL;
+            this._enabled = true;
+            this._logStackTraceForErrors = false;
             this._name = name;
             this._level = level;
         }
@@ -19,6 +22,18 @@ var Logr;
             },
             set: function (value) {
                 this._level = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(LoggerConfig.prototype, "enabled", {
+            get: function () {
+                return this._enabled;
+            },
+            set: function (value) {
+                this._enabled = value;
             },
             enumerable: true,
             configurable: true

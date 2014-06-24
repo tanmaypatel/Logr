@@ -11,7 +11,7 @@ module Logr
 		}
 		
 		
-		private _level:LogLevel;
+		private _level:LogLevel = LogLevel.ALL;
 		get level():LogLevel
 		{
 			return this._level;
@@ -23,7 +23,19 @@ module Logr
 		}
 		
 		
-		private _logStackTraceForErrors:boolean;
+		private _enabled:boolean = true;
+		get enabled():boolean
+		{
+			return this._enabled;
+		}
+
+		set enabled(value:boolean)
+		{
+			this._enabled = value;
+		}
+		
+		
+		private _logStackTraceForErrors:boolean = false;
 		get logStackTraceForErrors():boolean
 		{
 			return this._logStackTraceForErrors;
