@@ -1,16 +1,30 @@
 var Logr;
 (function (Logr) {
     var LoggerConfig = (function () {
-        function LoggerConfig(name, level) {
+        function LoggerConfig(name, parentLoggerConfig, level) {
+            this._name = '';
             this._level = Logr.LogLevel.ALL;
             this._enabled = true;
             this._logStackTraceForErrors = false;
+            this._publishers = [];
             this._name = name;
-            this._level = level;
+            this._parentLoggerConfig = parentLoggerConfig;
+
+            if (level) {
+                this._level = level;
+            }
         }
         Object.defineProperty(LoggerConfig.prototype, "name", {
             get: function () {
                 return this._name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(LoggerConfig.prototype, "parentLoggerConfig", {
+            get: function () {
+                return this._parentLoggerConfig;
             },
             enumerable: true,
             configurable: true
@@ -51,6 +65,14 @@ var Logr;
             configurable: true
         });
 
+
+        LoggerConfig.prototype.addPublisher = function (publisher) {
+            this._publishers.push(publisher);
+        };
+
+        LoggerConfig.prototype.removePublisher = function (publisher) {
+            this._publishers.push(publisher);
+        };
         return LoggerConfig;
     })();
     Logr.LoggerConfig = LoggerConfig;

@@ -1,13 +1,21 @@
 /// <reference path="LogLevel.ts"/>
+/// <reference path="Publishers/Publisher.ts"/>
 
 module Logr
 {
 	export class LoggerConfig
 	{
-		private _name:string;
+		private _name:string = '';
 		get name():string
 		{
 			return this._name;
+		}
+		
+		
+		private _parentLoggerConfig:LoggerConfig;
+		get parentLoggerConfig():LoggerConfig
+		{
+			return this._parentLoggerConfig;
 		}
 		
 		
@@ -46,10 +54,29 @@ module Logr
 			this._logStackTraceForErrors = value;
 		}
 		
-		constructor(name:string, level:LogLevel)
+		
+		private _publishers:Array<Publishers.Publisher> = [];
+		
+		addPublisher(publisher:Publishers.Publisher)
+		{
+			this._publishers.push(publisher);
+		}
+		
+		removePublisher(publisher:Publishers.Publisher)
+		{
+			this._publishers.push(publisher);
+		}
+		
+		
+		constructor(name:string, parentLoggerConfig:LoggerConfig, level:LogLevel)
 		{
 			this._name = name;
-			this._level = level;
+			this._parentLoggerConfig = parentLoggerConfig
+			
+			if(level)
+			{
+				this._level = level;
+			}
 		}
 	}
 }
