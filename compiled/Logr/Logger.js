@@ -11,6 +11,15 @@ var Logr;
             enumerable: true,
             configurable: true
         });
+
+        Logger.prototype.log = function (level, message) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 2); _i++) {
+                args[_i] = arguments[_i + 2];
+            }
+            var timestampForNow = Date.now ? Date.now() : new Date().getTime();
+            var logEvent = new Logr.LogEvent(this.loggerConfig, timestampForNow, message);
+        };
         return Logger;
     })();
     Logr.Logger = Logger;
