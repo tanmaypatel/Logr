@@ -5,6 +5,7 @@ requirejs.config({
 	waitSeconds: 300,
 
 	paths : {
+		'underscore' : '../components/underscore/underscore',
 		'mocha' : '../node_modules/mocha/mocha',
 		'chai' : '../node_modules/chai/chai',
 		'sinon' : '../node_modules/sinon/pkg/sinon-1.10.2',
@@ -12,6 +13,10 @@ requirejs.config({
 	},
 
 	shim : {
+		'underscore' : {
+			exports : '_'
+		},
+		
 		'chai' : {
 			exports : 'chai'
 		},
