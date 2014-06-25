@@ -5,25 +5,25 @@ module Logr
 {
 	export class LogEvent
 	{
-		private _loggerConfig:LoggerConfig;
-		get loggerConfig():LoggerConfig
+		private _loggerName:string;
+		get loggerName():string
 		{
-			return this._loggerConfig;
+			return this._loggerName;
 		}
 
-		set loggerConfig(value:LoggerConfig)
+		set loggerName(value:string)
 		{
-			this._loggerConfig = value;
+			this._loggerName = value;
 		}
 
 		
-		private _level:string;
-		get level():string
+		private _level:LogLevel;
+		get level():LogLevel
 		{
 			return this._level;
 		}
 
-		set level(value:string)
+		set level(value:LogLevel)
 		{
 			this._level = value;
 		}
@@ -65,9 +65,10 @@ module Logr
 		}
 
 
-		constructor(loggerConfig:LoggerConfig, timestamp:number, message:string)
+		constructor(loggerName:string, level:LogLevel, timestamp:number, message:string)
 		{
-			this._loggerConfig = loggerConfig;
+			this._loggerName = loggerName;
+			this._level = level;
 			this._timestamp = timestamp;
 			this._message = message;
 		}

@@ -134,17 +134,18 @@ var Logr;
 var Logr;
 (function (Logr) {
     var LogEvent = (function () {
-        function LogEvent(loggerConfig, timestamp, message) {
-            this._loggerConfig = loggerConfig;
+        function LogEvent(loggerName, level, timestamp, message) {
+            this._loggerName = loggerName;
+            this._level = level;
             this._timestamp = timestamp;
             this._message = message;
         }
-        Object.defineProperty(LogEvent.prototype, "loggerConfig", {
+        Object.defineProperty(LogEvent.prototype, "loggerName", {
             get: function () {
-                return this._loggerConfig;
+                return this._loggerName;
             },
             set: function (value) {
-                this._loggerConfig = value;
+                this._loggerName = value;
             },
             enumerable: true,
             configurable: true
@@ -232,12 +233,57 @@ var Logr;
             configurable: true
         });
 
-        Logger.prototype.log = function (level, message) {
+        Logger.prototype.log = function (level, message, additionalArguments) {
+            var logEvent = new Logr.LogEvent(this.loggerConfig.name, level, Logr.Utils.DateTimeUtils.now(), message);
+            console.log(this.loggerConfig.name, level, Logr.Utils.DateTimeUtils.now(), message);
+        };
+
+        Logger.prototype.trace = function (message) {
             var args = [];
-            for (var _i = 0; _i < (arguments.length - 2); _i++) {
-                args[_i] = arguments[_i + 2];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
             }
-            var logEvent = new Logr.LogEvent(this.loggerConfig, Logr.Utils.DateTimeUtils.now(), message);
+            this.log(10000 /* TRACE */, message, args);
+        };
+
+        Logger.prototype.debug = function (message) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
+            }
+            this.log(20000 /* DEBUG */, message, args);
+        };
+
+        Logger.prototype.info = function (message) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
+            }
+            this.log(30000 /* INFO */, message, args);
+        };
+
+        Logger.prototype.warn = function (message) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
+            }
+            this.log(40000 /* WARN */, message, args);
+        };
+
+        Logger.prototype.error = function (message) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
+            }
+            this.log(50000 /* ERROR */, message, args);
+        };
+
+        Logger.prototype.fatal = function (message) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                args[_i] = arguments[_i + 1];
+            }
+            this.log(60000 /* FATAL */, message, args);
         };
         return Logger;
     })();

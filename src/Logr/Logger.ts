@@ -20,9 +20,40 @@ module Logr
 		}
 		
 		
-		private log(level:LogLevel, message:string, ...args:any[]):void
+		private log(level:LogLevel, message:string, additionalArguments:any[]):void
 		{
-			var logEvent = new LogEvent(this.loggerConfig, Utils.DateTimeUtils.now(), message);
+			var logEvent = new LogEvent(this.loggerConfig.name, level, Utils.DateTimeUtils.now(), message);
+			console.log(this.loggerConfig.name, level, Utils.DateTimeUtils.now(), message);
+		}
+		
+		trace(message:string, ...args:any[]):void
+		{
+			this.log(LogLevel.TRACE, message, args);
+		}
+		
+		debug(message:string, ...args:any[]):void
+		{
+			this.log(LogLevel.DEBUG, message, args);
+		}
+		
+		info(message:string, ...args:any[]):void
+		{
+			this.log(LogLevel.INFO, message, args);
+		}
+		
+		warn(message:string, ...args:any[]):void
+		{
+			this.log(LogLevel.WARN, message, args);
+		}
+		
+		error(message:string, ...args:any[]):void
+		{
+			this.log(LogLevel.ERROR, message, args);
+		}
+		
+		fatal(message:string, ...args:any[]):void
+		{
+			this.log(LogLevel.FATAL, message, args);
 		}
 	}
 }
