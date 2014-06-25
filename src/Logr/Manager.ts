@@ -27,7 +27,8 @@ module Logr
 			}
 			else
 			{
-				var newLoggerConfig:LoggerConfig = new LoggerConfig(name, Manager._rootLoggerConfig, null);
+				var parentLoggerConfig = Manager._findParentLoggerConfigForName(name);
+				var newLoggerConfig:LoggerConfig = new LoggerConfig(name, parentLoggerConfig, null);
 				var newLogger:Logger = new Logger(newLoggerConfig);
 				Manager._loggers.push(newLogger);
 				

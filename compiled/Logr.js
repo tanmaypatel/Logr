@@ -458,7 +458,8 @@ var Logr;
             if (matchedLogger) {
                 logger = matchedLogger;
             } else {
-                var newLoggerConfig = new Logr.LoggerConfig(name, Manager._rootLoggerConfig, null);
+                var parentLoggerConfig = Manager._findParentLoggerConfigForName(name);
+                var newLoggerConfig = new Logr.LoggerConfig(name, parentLoggerConfig, null);
                 var newLogger = new Logr.Logger(newLoggerConfig);
                 Manager._loggers.push(newLogger);
 
