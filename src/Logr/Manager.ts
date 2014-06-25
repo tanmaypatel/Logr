@@ -24,9 +24,9 @@ module Logr
 			}
 			else
 			{
-				var matchedLogger:Logger = _.find(Manager._loggers, function()
+				var matchedLogger:Logger = _.find(Manager._loggers, function(currentLogger)
 				{
-					return (matchedLogger.loggerConfig.name == name);
+					return (currentLogger.loggerConfig.name == name);
 				});
 				
 				if(matchedLogger)

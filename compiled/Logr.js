@@ -134,12 +134,16 @@ var Logr;
             configurable: true
         });
 
-        LoggerConfig.prototype.addPublisher = function (publisher) {
-            this._publishers.push(publisher);
-        };
+        LoggerConfig.prototype.getParents = function () {
+            var parents = [];
+            var currentLoggerConfig = this;
 
-        LoggerConfig.prototype.removePublisher = function (publisher) {
-            this._publishers.push(publisher);
+            while (currentLoggerConfig.parentLoggerConfig) {
+                parents.push(currentLoggerConfig.parentLoggerConfig);
+                currentLoggerConfig = currentLoggerConfig.parentLoggerConfig;
+            }
+
+            return parents;
         };
         return LoggerConfig;
     })();
@@ -247,11 +251,59 @@ var Logr;
             configurable: true
         });
 
+        Logger.prototype.isEnable = function () {
+            return this.loggerConfig.enabled;
+        };
+
+        Logger.prototype.enable = function () {
+            this.loggerConfig.enabled = true;
+        };
+
+        Logger.prototype.disable = function () {
+            this.loggerConfig.enabled = false;
+        };
+
+        Logger.prototype.addPublisher = function (publisher) {
+            this.loggerConfig.publishers.push(publisher);
+        };
+
+        Logger.prototype.removePublisher = function (publisher) {
+            var publisherIndex = this.loggerConfig.publishers.indexOf(publisher);
+            if (publisherIndex !== -1) {
+                this.loggerConfig.publishers.splice(publisherIndex, 1);
+            }
+        };
+
         Logger.prototype.log = function (level, message, additionalArguments) {
             var logEvent = new Logr.LogEvent(this.loggerConfig.name, level, Logr.Utils.DateTimeUtils.now(), message);
 
-            for (var i = 0; i < this.loggerConfig.publishers.length; i++) {
-                this.loggerConfig.publishers[i].publish(logEvent);
+            var parents = this.loggerConfig.getParents();
+
+            var publishers = [];
+            var isLoggingEnabled = true;
+
+            for (var i = 0; i < parents.length; i++) {
+                isLoggingEnabled = parents[i].enabled && isLoggingEnabled;
+
+                for (var j = 0; j < parents[i].publishers.length; j++) {
+                    if (publishers.indexOf(parents[i].publishers[j]) === -1) {
+                        publishers.push(parents[i].publishers[j]);
+                    }
+                }
+            }
+
+            isLoggingEnabled = this.loggerConfig.enabled && isLoggingEnabled;
+
+            for (var j = 0; j < this.loggerConfig.publishers.length; j++) {
+                if (publishers.indexOf(this.loggerConfig.publishers[j]) === -1) {
+                    publishers.push(this.loggerConfig.publishers[j]);
+                }
+            }
+
+            if (isLoggingEnabled) {
+                for (var i = 0; i < publishers.length; i++) {
+                    publishers[i].publish(logEvent);
+                }
             }
         };
 
@@ -404,8 +456,8 @@ var Logr;
             if (!name) {
                 logger = Manager._rootLogger;
             } else {
-                var matchedLogger = _.find(Manager._loggers, function () {
-                    return (matchedLogger.loggerConfig.name == name);
+                var matchedLogger = _.find(Manager._loggers, function (currentLogger) {
+                    return (currentLogger.loggerConfig.name == name);
                 });
 
                 if (matchedLogger) {

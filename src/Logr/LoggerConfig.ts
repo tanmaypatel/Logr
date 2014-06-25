@@ -61,14 +61,19 @@ module Logr
 			return this._publishers;
 		}
 		
-		addPublisher(publisher:Publishers.Publisher)
-		{
-			this._publishers.push(publisher);
-		}
 		
-		removePublisher(publisher:Publishers.Publisher)
+		getParents():Array<LoggerConfig>
 		{
-			this._publishers.push(publisher);
+			var parents:Array<LoggerConfig> = [];
+			var currentLoggerConfig = this;
+			
+			while(currentLoggerConfig.parentLoggerConfig)
+			{
+				parents.push(currentLoggerConfig.parentLoggerConfig);
+				currentLoggerConfig = currentLoggerConfig.parentLoggerConfig;
+			}
+			
+			return parents;
 		}
 		
 		
