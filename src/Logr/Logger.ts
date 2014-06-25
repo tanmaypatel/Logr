@@ -23,7 +23,12 @@ module Logr
 		private log(level:LogLevel, message:string, additionalArguments:any[]):void
 		{
 			var logEvent = new LogEvent(this.loggerConfig.name, level, Utils.DateTimeUtils.now(), message);
-			console.log(this.loggerConfig.name, level, Utils.DateTimeUtils.now(), message);
+			
+			for(var i = 0; i < this.loggerConfig.publishers.length; i++)
+			{
+				this.loggerConfig.publishers[i].publish(logEvent);
+			}
+			
 		}
 		
 		trace(message:string, ...args:any[]):void

@@ -6,6 +6,7 @@ requirejs.config({
 
 	paths : {
 		'underscore' : '../components/underscore/underscore',
+		'moment': '../components/moment/moment',
 		'mocha' : '../node_modules/mocha/mocha',
 		'chai' : '../node_modules/chai/chai',
 		'sinon' : '../node_modules/sinon/pkg/sinon-1.10.2',
@@ -15,6 +16,10 @@ requirejs.config({
 	shim : {
 		'underscore' : {
 			exports : '_'
+		},
+		
+		'moment': {
+			exports: 'moment'
 		},
 		
 		'chai' : {
@@ -37,6 +42,8 @@ require(['chai',
          'mocha', 
          'sinon', 
          'sinon-chai',
+         'underscore',
+         'moment',
          'Logr'],
 
 function(chai, mocha, sinon, sinonChai) 

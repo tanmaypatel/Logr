@@ -56,6 +56,10 @@ module Logr
 		
 		
 		private _publishers:Array<Publishers.Publisher> = [];
+		get publishers():Array<Publishers.Publisher>
+		{
+			return this._publishers;
+		}
 		
 		addPublisher(publisher:Publishers.Publisher)
 		{
@@ -68,7 +72,7 @@ module Logr
 		}
 		
 		
-		constructor(name:string, parentLoggerConfig:LoggerConfig, level:LogLevel)
+		constructor(name:string, parentLoggerConfig:LoggerConfig, level?:LogLevel, publishers?:Array<Publishers.Publisher>)
 		{
 			this._name = name;
 			this._parentLoggerConfig = parentLoggerConfig
@@ -76,6 +80,14 @@ module Logr
 			if(level)
 			{
 				this._level = level;
+			}
+			
+			if(publishers)
+			{
+				for(var i = 0; i < publishers.length; i++)
+				{
+					this._publishers.push(publishers[i]);
+				}
 			}
 		}
 	}

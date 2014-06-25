@@ -55,7 +55,7 @@ var Logr;
 var Logr;
 (function (Logr) {
     var LoggerConfig = (function () {
-        function LoggerConfig(name, parentLoggerConfig, level) {
+        function LoggerConfig(name, parentLoggerConfig, level, publishers) {
             this._name = '';
             this._level = Logr.LogLevel.ALL;
             this._enabled = true;
@@ -66,6 +66,12 @@ var Logr;
 
             if (level) {
                 this._level = level;
+            }
+
+            if (publishers) {
+                for (var i = 0; i < publishers.length; i++) {
+                    this._publishers.push(publishers[i]);
+                }
             }
         }
         Object.defineProperty(LoggerConfig.prototype, "name", {
@@ -119,6 +125,14 @@ var Logr;
             configurable: true
         });
 
+
+        Object.defineProperty(LoggerConfig.prototype, "publishers", {
+            get: function () {
+                return this._publishers;
+            },
+            enumerable: true,
+            configurable: true
+        });
 
         LoggerConfig.prototype.addPublisher = function (publisher) {
             this._publishers.push(publisher);
@@ -235,7 +249,10 @@ var Logr;
 
         Logger.prototype.log = function (level, message, additionalArguments) {
             var logEvent = new Logr.LogEvent(this.loggerConfig.name, level, Logr.Utils.DateTimeUtils.now(), message);
-            console.log(this.loggerConfig.name, level, Logr.Utils.DateTimeUtils.now(), message);
+
+            for (var i = 0; i < this.loggerConfig.publishers.length; i++) {
+                this.loggerConfig.publishers[i].publish(logEvent);
+            }
         };
 
         Logger.prototype.trace = function (message) {
@@ -291,6 +308,93 @@ var Logr;
 })(Logr || (Logr = {}));
 var Logr;
 (function (Logr) {
+    (function (Representers) {
+        var DefaultJSONRepresenter = (function () {
+            function DefaultJSONRepresenter() {
+            }
+            DefaultJSONRepresenter.prototype.represent = function (logEvent) {
+                var JSONRepresentation = {};
+
+                JSONRepresentation.logger = logEvent.loggerName ? logEvent.loggerName : 'DEFAULT';
+                JSONRepresentation.logLevel = logEvent.level;
+                JSONRepresentation.timestamp = logEvent.timestamp;
+                JSONRepresentation.message = logEvent.message;
+                JSONRepresentation.additionalData = logEvent.additionalData;
+
+                return JSONRepresentation;
+            };
+            return DefaultJSONRepresenter;
+        })();
+        Representers.DefaultJSONRepresenter = DefaultJSONRepresenter;
+    })(Logr.Representers || (Logr.Representers = {}));
+    var Representers = Logr.Representers;
+})(Logr || (Logr = {}));
+var Logr;
+(function (Logr) {
+    (function (Publishers) {
+        var ConsolePublisher = (function () {
+            function ConsolePublisher() {
+                this._representer = new Logr.Representers.DefaultJSONRepresenter();
+            }
+            Object.defineProperty(ConsolePublisher.prototype, "representer", {
+                get: function () {
+                    return this._representer;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            ConsolePublisher.prototype.publish = function (logEvent) {
+                var representation = this.representer.represent(logEvent);
+
+                var stringPartials = [];
+
+                stringPartials.push('%c' + representation.logger);
+                stringPartials.push('%c' + moment(representation.timestamp).format('MMM DD YY, HH:mm:ss.SSS'));
+                stringPartials.push('%c' + Logr.LogLevel[representation.logLevel]);
+                stringPartials.push('%c' + representation.message);
+
+                var logLevelColor = '';
+                var messageColor = 'black';
+
+                switch (representation.logLevel) {
+                    case 10000 /* TRACE */:
+                        logLevelColor = 'gray';
+                        break;
+
+                    case 20000 /* DEBUG */:
+                        logLevelColor = 'darkgreen';
+                        break;
+
+                    case 30000 /* INFO */:
+                        logLevelColor = 'blue';
+                        break;
+
+                    case 40000 /* WARN */:
+                        logLevelColor = 'orange';
+                        break;
+
+                    case 50000 /* ERROR */:
+                        messageColor = 'red';
+                        logLevelColor = 'red';
+                        break;
+
+                    case 60000 /* FATAL */:
+                        logLevelColor = 'darkred';
+                        messageColor = 'darkred';
+                        break;
+                }
+
+                console.log(stringPartials.join(' '), 'color: darkgray', 'color: silver', 'color: ' + logLevelColor, 'color: ' + messageColor);
+            };
+            return ConsolePublisher;
+        })();
+        Publishers.ConsolePublisher = ConsolePublisher;
+    })(Logr.Publishers || (Logr.Publishers = {}));
+    var Publishers = Logr.Publishers;
+})(Logr || (Logr = {}));
+var Logr;
+(function (Logr) {
     var Manager = (function () {
         function Manager() {
         }
@@ -321,10 +425,33 @@ var Logr;
         Manager.getDefaultConfig = function () {
             return Manager._rootLoggerConfig;
         };
-        Manager._rootLoggerConfig = new Logr.LoggerConfig('', null, Logr.LogLevel.ALL);
+        Manager._rootLoggerConfig = new Logr.LoggerConfig('', null, Logr.LogLevel.ALL, [new Logr.Publishers.ConsolePublisher()]);
 
         Manager._rootLogger = new Logr.Logger(Manager._rootLoggerConfig);
+
+        Manager._loggers = [Manager._rootLogger];
         return Manager;
     })();
     Logr.Manager = Manager;
+})(Logr || (Logr = {}));
+var Logr;
+(function (Logr) {
+    (function (Representers) {
+        var DefaultStringRepresenter = (function () {
+            function DefaultStringRepresenter() {
+            }
+            DefaultStringRepresenter.prototype.represent = function (logEvent) {
+                var representationTokens = [];
+
+                representationTokens.push(logEvent.loggerName || 'DEFAULT');
+                representationTokens.push(moment(logEvent.timestamp).format('MMM Do YY, h:mm:ss a'));
+                representationTokens.push(logEvent.message);
+
+                return representationTokens.join(' | ');
+            };
+            return DefaultStringRepresenter;
+        })();
+        Representers.DefaultStringRepresenter = DefaultStringRepresenter;
+    })(Logr.Representers || (Logr.Representers = {}));
+    var Representers = Logr.Representers;
 })(Logr || (Logr = {}));

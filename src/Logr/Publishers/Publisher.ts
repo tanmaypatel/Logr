@@ -1,4 +1,5 @@
 /// <reference path="../LogEvent.ts"/>
+/// <reference path="../Representers/Representer.ts"/>
 
 module Logr
 {
@@ -6,7 +7,7 @@ module Logr
 	{
 		export interface Publisher
 		{
-			publish(logEvent:LogEvent);
+			publish(logEvent:LogEvent):void;
 		}
 	}
 }
