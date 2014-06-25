@@ -2,7 +2,6 @@
 /// <reference path="LogLevel.ts"/>
 /// <reference path="LoggerConfig.ts"/>
 /// <reference path="Publishers/ConsolePublisher.ts"/>
-/// <reference path="../components/underscore/underscore.d.ts"/>
 
 module Logr
 {
@@ -12,38 +11,83 @@ module Logr
 		
 		private static _rootLogger = new Logger(Manager._rootLoggerConfig); 
 		
+		private static NAMESPACE_SEPARATOR:string = '.';
+		
 		static _loggers:Array<Logger> = [Manager._rootLogger];
 		
 		static getLogger(name:string):Logger
 		{
 			var logger:Logger = null;
 		
-			if(!name)
+			var matchedLogger:Logger = Manager._findLoggerByName(name);
+			
+			if(matchedLogger)
 			{
-				logger = Manager._rootLogger;
+				logger = matchedLogger;
 			}
 			else
 			{
-				var matchedLogger:Logger = _.find(Manager._loggers, function(currentLogger)
-				{
-					return (currentLogger.loggerConfig.name == name);
-				});
+				var newLoggerConfig:LoggerConfig = new LoggerConfig(name, Manager._rootLoggerConfig, null);
+				var newLogger:Logger = new Logger(newLoggerConfig);
+				Manager._loggers.push(newLogger);
 				
-				if(matchedLogger)
-				{
-					logger = matchedLogger;
-				}
-				else
-				{
-					var newLoggerConfig:LoggerConfig = new LoggerConfig(name, Manager._rootLoggerConfig, null);
-					var newLogger:Logger = new Logger(newLoggerConfig);
-					Manager._loggers.push(newLogger);
-					
-					logger = newLogger;
-				}
+				logger = newLogger;
 			}
 			
 			return logger;
+		}
+		
+		private static _findLoggerByName(name:string):Logger
+		{
+			var macthedLogger:Logger = null;
+		
+			if(name)
+			{
+				for(var i = 0; i < Manager._loggers.length; i++)
+				{
+					var currentLogger = Manager._loggers[i];
+					
+					if(currentLogger.loggerConfig.name === name)
+					{
+						macthedLogger = currentLogger;
+						break;
+					}
+				}
+			}
+			else
+			{
+				macthedLogger = Manager._rootLogger;
+			}
+			
+			return macthedLogger;
+		}
+		
+		private static _findParentLoggerConfigForName(name:string):LoggerConfig
+		{
+			var matchedLoggerConfig:LoggerConfig = null;
+			
+			if(name)
+			{
+				var matchedLogger = null;
+				var tokens = name.split(Manager.NAMESPACE_SEPARATOR);
+				
+				while(!matchedLogger)
+				{
+					var removedToken = tokens.pop();
+					
+					var remainingNamespace = tokens.join(Manager.NAMESPACE_SEPARATOR);
+					
+					matchedLogger = Manager._findLoggerByName(remainingNamespace);
+				}
+				
+				matchedLoggerConfig = matchedLogger.loggerConfig;
+			}
+			else
+			{
+				matchedLoggerConfig = Manager.getDefaultConfig();
+			}
+			
+			return matchedLoggerConfig;
 		}
 		
 		static getDefaultConfig():LoggerConfig

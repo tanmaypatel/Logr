@@ -453,25 +453,61 @@ var Logr;
         Manager.getLogger = function (name) {
             var logger = null;
 
-            if (!name) {
-                logger = Manager._rootLogger;
+            var matchedLogger = Manager._findLoggerByName(name);
+
+            if (matchedLogger) {
+                logger = matchedLogger;
             } else {
-                var matchedLogger = _.find(Manager._loggers, function (currentLogger) {
-                    return (currentLogger.loggerConfig.name == name);
-                });
+                var newLoggerConfig = new Logr.LoggerConfig(name, Manager._rootLoggerConfig, null);
+                var newLogger = new Logr.Logger(newLoggerConfig);
+                Manager._loggers.push(newLogger);
 
-                if (matchedLogger) {
-                    logger = matchedLogger;
-                } else {
-                    var newLoggerConfig = new Logr.LoggerConfig(name, Manager._rootLoggerConfig, null);
-                    var newLogger = new Logr.Logger(newLoggerConfig);
-                    Manager._loggers.push(newLogger);
-
-                    logger = newLogger;
-                }
+                logger = newLogger;
             }
 
             return logger;
+        };
+
+        Manager._findLoggerByName = function (name) {
+            var macthedLogger = null;
+
+            if (name) {
+                for (var i = 0; i < Manager._loggers.length; i++) {
+                    var currentLogger = Manager._loggers[i];
+
+                    if (currentLogger.loggerConfig.name === name) {
+                        macthedLogger = currentLogger;
+                        break;
+                    }
+                }
+            } else {
+                macthedLogger = Manager._rootLogger;
+            }
+
+            return macthedLogger;
+        };
+
+        Manager._findParentLoggerConfigForName = function (name) {
+            var matchedLoggerConfig = null;
+
+            if (name) {
+                var matchedLogger = null;
+                var tokens = name.split(Manager.NAMESPACE_SEPARATOR);
+
+                while (!matchedLogger) {
+                    var removedToken = tokens.pop();
+
+                    var remainingNamespace = tokens.join(Manager.NAMESPACE_SEPARATOR);
+
+                    matchedLogger = Manager._findLoggerByName(remainingNamespace);
+                }
+
+                matchedLoggerConfig = matchedLogger.loggerConfig;
+            } else {
+                matchedLoggerConfig = Manager.getDefaultConfig();
+            }
+
+            return matchedLoggerConfig;
         };
 
         Manager.getDefaultConfig = function () {
@@ -480,6 +516,8 @@ var Logr;
         Manager._rootLoggerConfig = new Logr.LoggerConfig('', null, Logr.LogLevel.ALL, [new Logr.Publishers.ConsolePublisher()]);
 
         Manager._rootLogger = new Logr.Logger(Manager._rootLoggerConfig);
+
+        Manager.NAMESPACE_SEPARATOR = '.';
 
         Manager._loggers = [Manager._rootLogger];
         return Manager;

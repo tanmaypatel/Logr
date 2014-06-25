@@ -5,7 +5,6 @@ requirejs.config({
 	waitSeconds: 300,
 
 	paths : {
-		'underscore' : '../components/underscore/underscore',
 		'moment': '../components/moment/moment',
 		'mocha' : '../node_modules/mocha/mocha',
 		'chai' : '../node_modules/chai/chai',
@@ -14,10 +13,6 @@ requirejs.config({
 	},
 
 	shim : {
-		'underscore' : {
-			exports : '_'
-		},
-		
 		'moment': {
 			exports: 'moment'
 		},
@@ -42,7 +37,6 @@ require(['chai',
          'mocha', 
          'sinon', 
          'sinon-chai',
-         'underscore',
          'moment',
          'Logr'],
 
