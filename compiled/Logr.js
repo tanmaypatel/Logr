@@ -208,6 +208,33 @@ var Logr;
 (function (Logr) {
     var Utils;
     (function (Utils) {
+        var StringUtils = (function () {
+            function StringUtils() {
+            }
+            StringUtils.lpad = function (originalString, stringToPad, requiredLength) {
+                var paddedString = originalString;
+                while (paddedString.length < requiredLength) {
+                    paddedString = stringToPad + paddedString;
+                }
+                return paddedString;
+            };
+            StringUtils.rpad = function (originalString, stringToPad, requiredLength) {
+                var paddedString = originalString;
+                while (paddedString.length < requiredLength) {
+                    paddedString = paddedString + stringToPad;
+                }
+                return paddedString;
+            };
+            return StringUtils;
+        })();
+        Utils.StringUtils = StringUtils;
+    })(Utils = Logr.Utils || (Logr.Utils = {}));
+})(Logr || (Logr = {}));
+/// <reference path="StringUtils.ts"/>
+var Logr;
+(function (Logr) {
+    var Utils;
+    (function (Utils) {
         var DateTimeUtils = (function () {
             function DateTimeUtils() {
             }
@@ -215,6 +242,22 @@ var Logr;
                 var timestampForNow = Date.now ? Date.now() : new Date().getTime();
                 return timestampForNow;
             };
+            DateTimeUtils.format = function (date) {
+                var formattedDateTokens = [];
+                formattedDateTokens.push(DateTimeUtils.abbriviatedDayNames[date.getDay()]);
+                formattedDateTokens.push(DateTimeUtils.abbriviatedMonthNames[date.getMonth()]);
+                formattedDateTokens.push(Utils.StringUtils.lpad(date.getDate() + '', '0', 2));
+                formattedDateTokens.push(date.getFullYear() + '');
+                var formattedTimeTokens = [];
+                formattedTimeTokens.push(Utils.StringUtils.lpad(date.getHours() + '', '0', 2));
+                formattedTimeTokens.push(Utils.StringUtils.lpad(date.getMinutes() + '', '0', 2));
+                formattedTimeTokens.push(Utils.StringUtils.lpad(date.getSeconds() + '', '0', 2) + '.' + Utils.StringUtils.lpad(date.getMilliseconds() + '', '0', 3));
+                return formattedDateTokens.join(' ') + ' ' + formattedTimeTokens.join(':');
+            };
+            DateTimeUtils.fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            DateTimeUtils.abbriviatedMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            DateTimeUtils.fullDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            DateTimeUtils.abbriviatedDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             return DateTimeUtils;
         })();
         Utils.DateTimeUtils = DateTimeUtils;
@@ -338,7 +381,7 @@ var Logr;
 /// <reference path="Representer.ts"/>
 /// <reference path="../LogLevel.ts"/>
 /// <reference path="../LogEvent.ts"/>
-/// <reference path="../../components/moment/moment.d.ts"/>8
+/// <reference path="../Utils/DateTimeUtils.ts"/>
 var Logr;
 (function (Logr) {
     var Representers;
@@ -349,7 +392,7 @@ var Logr;
             DefaultStringRepresenter.prototype.represent = function (logEvent) {
                 var representationTokens = [];
                 representationTokens.push(logEvent.loggerName || 'DEFAULT');
-                representationTokens.push(moment(logEvent.timestamp).format('MMM Do YY, h:mm:ss a'));
+                representationTokens.push(Logr.Utils.DateTimeUtils.format(new Date(logEvent.timestamp)));
                 representationTokens.push(Logr.LogLevel[logEvent.level]);
                 representationTokens.push(logEvent.message);
                 return representationTokens.join(' // ');
@@ -408,10 +451,93 @@ var Logr;
         Publishers.BasicConsolePublisher = BasicConsolePublisher;
     })(Publishers = Logr.Publishers || (Logr.Publishers = {}));
 })(Logr || (Logr = {}));
+/// <reference path="Representer.ts"/>
+/// <reference path="../LogEvent.ts"/>
+/// <reference path="../LogEvent.ts"/>
+var Logr;
+(function (Logr) {
+    var Representers;
+    (function (Representers) {
+        var DefaultJSONRepresenter = (function () {
+            function DefaultJSONRepresenter() {
+            }
+            DefaultJSONRepresenter.prototype.represent = function (logEvent) {
+                var JSONRepresentation = {};
+                JSONRepresentation.logger = logEvent.loggerName ? logEvent.loggerName : 'DEFAULT';
+                JSONRepresentation.logLevel = logEvent.level;
+                JSONRepresentation.timestamp = logEvent.timestamp;
+                JSONRepresentation.message = logEvent.message;
+                JSONRepresentation.additionalData = logEvent.additionalData;
+                return JSONRepresentation;
+            };
+            return DefaultJSONRepresenter;
+        })();
+        Representers.DefaultJSONRepresenter = DefaultJSONRepresenter;
+    })(Representers = Logr.Representers || (Logr.Representers = {}));
+})(Logr || (Logr = {}));
+/// <reference path="Publisher.ts"/>
+/// <reference path="../LogEvent.ts"/>
+/// <reference path="../Representers/Representer.ts"/>
+/// <reference path="../Representers/DefaultJSONRepresenter.ts"/>
+/// <reference path="../Utils/DateTimeUtils.ts"/>
+var Logr;
+(function (Logr) {
+    var Publishers;
+    (function (Publishers) {
+        var EnhancedConsolePublisher = (function () {
+            function EnhancedConsolePublisher() {
+                this._representer = new Logr.Representers.DefaultJSONRepresenter();
+            }
+            Object.defineProperty(EnhancedConsolePublisher.prototype, "representer", {
+                get: function () {
+                    return this._representer;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            EnhancedConsolePublisher.prototype.publish = function (logEvent) {
+                var representation = this.representer.represent(logEvent);
+                var stringPartials = [];
+                stringPartials.push('%c' + representation.logger);
+                stringPartials.push('%c' + Logr.Utils.DateTimeUtils.format(new Date(representation.timestamp)));
+                stringPartials.push('%c' + Logr.LogLevel[representation.logLevel]);
+                stringPartials.push('%c' + representation.message);
+                var logLevelColor = '';
+                var messageColor = 'black';
+                switch (representation.logLevel) {
+                    case 10000 /* TRACE */:
+                        logLevelColor = 'gray';
+                        break;
+                    case 20000 /* DEBUG */:
+                        logLevelColor = 'darkgreen';
+                        break;
+                    case 30000 /* INFO */:
+                        logLevelColor = 'blue';
+                        break;
+                    case 40000 /* WARN */:
+                        logLevelColor = 'orange';
+                        break;
+                    case 50000 /* ERROR */:
+                        messageColor = 'red';
+                        logLevelColor = 'red';
+                        break;
+                    case 60000 /* FATAL */:
+                        logLevelColor = 'darkred';
+                        messageColor = 'darkred';
+                        break;
+                }
+                console.log(stringPartials.join(' '), 'color: darkgray', 'color: silver', 'color: ' + logLevelColor, 'color: ' + messageColor);
+            };
+            return EnhancedConsolePublisher;
+        })();
+        Publishers.EnhancedConsolePublisher = EnhancedConsolePublisher;
+    })(Publishers = Logr.Publishers || (Logr.Publishers = {}));
+})(Logr || (Logr = {}));
 /// <reference path="Logger.ts"/>
 /// <reference path="LogLevel.ts"/>
 /// <reference path="LoggerConfig.ts"/>
 /// <reference path="Publishers/BasicConsolePublisher.ts"/>
+/// <reference path="Publishers/EnhancedConsolePublisher.ts"/>
 var Logr;
 (function (Logr) {
     var Manager = (function () {
@@ -475,86 +601,4 @@ var Logr;
         return Manager;
     })();
     Logr.Manager = Manager;
-})(Logr || (Logr = {}));
-/// <reference path="Representer.ts"/>
-/// <reference path="../LogEvent.ts"/>
-/// <reference path="../LogEvent.ts"/>
-var Logr;
-(function (Logr) {
-    var Representers;
-    (function (Representers) {
-        var DefaultJSONRepresenter = (function () {
-            function DefaultJSONRepresenter() {
-            }
-            DefaultJSONRepresenter.prototype.represent = function (logEvent) {
-                var JSONRepresentation = {};
-                JSONRepresentation.logger = logEvent.loggerName ? logEvent.loggerName : 'DEFAULT';
-                JSONRepresentation.logLevel = logEvent.level;
-                JSONRepresentation.timestamp = logEvent.timestamp;
-                JSONRepresentation.message = logEvent.message;
-                JSONRepresentation.additionalData = logEvent.additionalData;
-                return JSONRepresentation;
-            };
-            return DefaultJSONRepresenter;
-        })();
-        Representers.DefaultJSONRepresenter = DefaultJSONRepresenter;
-    })(Representers = Logr.Representers || (Logr.Representers = {}));
-})(Logr || (Logr = {}));
-/// <reference path="Publisher.ts"/>
-/// <reference path="../LogEvent.ts"/>
-/// <reference path="../Representers/Representer.ts"/>
-/// <reference path="../Representers/DefaultJSONRepresenter.ts"/>
-/// <reference path="../../components/moment/moment.d.ts"/>
-var Logr;
-(function (Logr) {
-    var Publishers;
-    (function (Publishers) {
-        var EnhancedConsolePublisher = (function () {
-            function EnhancedConsolePublisher() {
-                this._representer = new Logr.Representers.DefaultJSONRepresenter();
-            }
-            Object.defineProperty(EnhancedConsolePublisher.prototype, "representer", {
-                get: function () {
-                    return this._representer;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            EnhancedConsolePublisher.prototype.publish = function (logEvent) {
-                var representation = this.representer.represent(logEvent);
-                var stringPartials = [];
-                stringPartials.push('%c' + representation.logger);
-                stringPartials.push('%c' + moment(representation.timestamp).format('MMM DD YY, HH:mm:ss.SSS'));
-                stringPartials.push('%c' + Logr.LogLevel[representation.logLevel]);
-                stringPartials.push('%c' + representation.message);
-                var logLevelColor = '';
-                var messageColor = 'black';
-                switch (representation.logLevel) {
-                    case 10000 /* TRACE */:
-                        logLevelColor = 'gray';
-                        break;
-                    case 20000 /* DEBUG */:
-                        logLevelColor = 'darkgreen';
-                        break;
-                    case 30000 /* INFO */:
-                        logLevelColor = 'blue';
-                        break;
-                    case 40000 /* WARN */:
-                        logLevelColor = 'orange';
-                        break;
-                    case 50000 /* ERROR */:
-                        messageColor = 'red';
-                        logLevelColor = 'red';
-                        break;
-                    case 60000 /* FATAL */:
-                        logLevelColor = 'darkred';
-                        messageColor = 'darkred';
-                        break;
-                }
-                console.log(stringPartials.join(' '), 'color: darkgray', 'color: silver', 'color: ' + logLevelColor, 'color: ' + messageColor);
-            };
-            return EnhancedConsolePublisher;
-        })();
-        Publishers.EnhancedConsolePublisher = EnhancedConsolePublisher;
-    })(Publishers = Logr.Publishers || (Logr.Publishers = {}));
 })(Logr || (Logr = {}));

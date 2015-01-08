@@ -1,7 +1,7 @@
 /// <reference path="Representer.ts"/>
 /// <reference path="../LogLevel.ts"/>
 /// <reference path="../LogEvent.ts"/>
-/// <reference path="../../components/moment/moment.d.ts"/>8
+/// <reference path="../Utils/DateTimeUtils.ts"/>
 
 module Logr
 {
@@ -14,7 +14,7 @@ module Logr
 				var representationTokens = [];
 				
 				representationTokens.push(logEvent.loggerName || 'DEFAULT');
-				representationTokens.push(moment(logEvent.timestamp).format('MMM Do YY, h:mm:ss a'));
+				representationTokens.push(Utils.DateTimeUtils.format(new Date(logEvent.timestamp)));
 				representationTokens.push(LogLevel[logEvent.level]);
 				representationTokens.push(logEvent.message);
 				

@@ -2,7 +2,7 @@
 /// <reference path="../LogEvent.ts"/>
 /// <reference path="../Representers/Representer.ts"/>
 /// <reference path="../Representers/DefaultJSONRepresenter.ts"/>
-/// <reference path="../../components/moment/moment.d.ts"/>
+/// <reference path="../Utils/DateTimeUtils.ts"/>
 
 module Logr
 {
@@ -24,7 +24,7 @@ module Logr
 				var stringPartials = [];
 				
 				stringPartials.push('%c' + representation.logger);
-				stringPartials.push('%c' + moment(representation.timestamp).format('MMM DD YY, HH:mm:ss.SSS'));
+				stringPartials.push('%c' + Utils.DateTimeUtils.format(new Date(representation.timestamp)));
 				stringPartials.push('%c' + LogLevel[representation.logLevel]);
 				stringPartials.push('%c' + representation.message);
 				

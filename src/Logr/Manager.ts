@@ -2,6 +2,7 @@
 /// <reference path="LogLevel.ts"/>
 /// <reference path="LoggerConfig.ts"/>
 /// <reference path="Publishers/BasicConsolePublisher.ts"/>
+/// <reference path="Publishers/EnhancedConsolePublisher.ts"/>
 
 module Logr
 {
