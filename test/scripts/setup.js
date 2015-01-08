@@ -5,7 +5,6 @@ requirejs.config({
 	waitSeconds: 300,
 
 	paths : {
-		'moment': 'components/moment/moment',
 		'mocha' : 'node_modules/mocha/mocha',
 		'chai' : 'node_modules/chai/chai',
 		'sinon' : 'node_modules/sinon/pkg/sinon',
@@ -13,10 +12,6 @@ requirejs.config({
 	},
 
 	shim : {
-		'moment': {
-			exports: 'moment'
-		},
-		
 		'chai' : {
 			exports : 'chai'
 		},
@@ -37,7 +32,6 @@ require(['chai',
          'mocha', 
          'sinon', 
          'sinon-chai',
-         'moment',
          'compiled/Logr'],
 
 function(chai, mocha, sinon, sinonChai) 
