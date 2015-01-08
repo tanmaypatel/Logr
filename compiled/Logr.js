@@ -526,7 +526,7 @@ var Logr;
                         messageColor = 'darkred';
                         break;
                 }
-                console.log(stringPartials.join(' '), 'color: darkgray', 'color: silver', 'color: ' + logLevelColor, 'color: ' + messageColor);
+                console.log.apply(console, [stringPartials.join(' '), 'color: darkgray', 'color: silver', 'color: ' + logLevelColor, 'color: ' + messageColor].concat(logEvent.additionalData || []));
             };
             return EnhancedConsolePublisher;
         })();
@@ -594,7 +594,7 @@ var Logr;
         Manager.getDefaultConfig = function () {
             return Manager._rootLoggerConfig;
         };
-        Manager._rootLoggerConfig = new Logr.LoggerConfig('', null, Logr.LogLevel.ALL, [new Logr.Publishers.BasicConsolePublisher()]);
+        Manager._rootLoggerConfig = new Logr.LoggerConfig('', null, Logr.LogLevel.ALL, [new Logr.Publishers.EnhancedConsolePublisher()]);
         Manager._rootLogger = new Logr.Logger(Manager._rootLoggerConfig);
         Manager.NAMESPACE_SEPARATOR = '.';
         Manager._loggers = [Manager._rootLogger];

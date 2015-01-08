@@ -60,11 +60,11 @@ module Logr
 						break;
 				}
 				
-				console.log(stringPartials.join(' '), 
-							'color: darkgray', 
-							'color: silver', 
-							'color: ' + logLevelColor, 
-							'color: ' + messageColor);
+				console.log.apply(console, [stringPartials.join(' '), 
+											'color: darkgray', 
+											'color: silver', 
+											'color: ' + logLevelColor, 
+											'color: ' + messageColor].concat(logEvent.additionalData || []));
 			}
 		}
 	}

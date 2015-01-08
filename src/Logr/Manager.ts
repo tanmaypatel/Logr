@@ -8,7 +8,7 @@ module Logr
 {
 	export class Manager
 	{
-		private static _rootLoggerConfig = new LoggerConfig('', null, LogLevel.ALL, [new Publishers.BasicConsolePublisher()]);
+		private static _rootLoggerConfig = new LoggerConfig('', null, LogLevel.ALL, [new Publishers.EnhancedConsolePublisher()]);
 		
 		private static _rootLogger = new Logger(Manager._rootLoggerConfig); 
 		
