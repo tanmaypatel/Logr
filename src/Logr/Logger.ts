@@ -21,7 +21,7 @@ module Logr
 		}
 		
 		
-		isEnable():boolean
+		isEnabled():boolean
 		{
 			return this.loggerConfig.enabled;
 		}
@@ -52,9 +52,10 @@ module Logr
 		}
 		
 		
-		private log(level:LogLevel, message:string, additionalArguments:any[]):void
+		private _performLog(level:LogLevel, message:string, additionalArguments:any[]):void
 		{
 			var logEvent = new LogEvent(this.loggerConfig.name, level, Utils.DateTimeUtils.now(), message);
+			logEvent.additionalData = additionalArguments;
 			
 			var parents = this.loggerConfig.getParents();
 			
@@ -93,34 +94,39 @@ module Logr
 			}
 		}
 		
+		get log():Function
+		{
+			return this.trace;
+		}
+
 		trace(message:string, ...args:any[]):void
 		{
-			this.log(LogLevel.TRACE, message, args);
+			this._performLog(LogLevel.TRACE, message, args);
 		}
 		
 		debug(message:string, ...args:any[]):void
 		{
-			this.log(LogLevel.DEBUG, message, args);
+			this._performLog(LogLevel.DEBUG, message, args);
 		}
 		
 		info(message:string, ...args:any[]):void
 		{
-			this.log(LogLevel.INFO, message, args);
+			this._performLog(LogLevel.INFO, message, args);
 		}
 		
 		warn(message:string, ...args:any[]):void
 		{
-			this.log(LogLevel.WARN, message, args);
+			this._performLog(LogLevel.WARN, message, args);
 		}
 		
 		error(message:string, ...args:any[]):void
 		{
-			this.log(LogLevel.ERROR, message, args);
+			this._performLog(LogLevel.ERROR, message, args);
 		}
 		
 		fatal(message:string, ...args:any[]):void
 		{
-			this.log(LogLevel.FATAL, message, args);
+			this._performLog(LogLevel.FATAL, message, args);
 		}
 	}
 }

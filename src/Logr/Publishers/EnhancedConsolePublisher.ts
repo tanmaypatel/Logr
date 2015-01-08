@@ -8,7 +8,7 @@ module Logr
 {
 	export module Publishers
 	{
-		export class ConsolePublisher implements Publisher
+		export class EnhancedConsolePublisher implements Publisher
 		{
 			private _representer:Representers.Representer = new Representers.DefaultJSONRepresenter();
 			get representer():Representers.Representer

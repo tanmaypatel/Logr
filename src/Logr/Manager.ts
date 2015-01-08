@@ -1,13 +1,13 @@
 /// <reference path="Logger.ts"/>
 /// <reference path="LogLevel.ts"/>
 /// <reference path="LoggerConfig.ts"/>
-/// <reference path="Publishers/ConsolePublisher.ts"/>
+/// <reference path="Publishers/BasicConsolePublisher.ts"/>
 
 module Logr
 {
 	export class Manager
 	{
-		private static _rootLoggerConfig = new LoggerConfig('', null, LogLevel.ALL, [new Publishers.ConsolePublisher()]);
+		private static _rootLoggerConfig = new LoggerConfig('', null, LogLevel.ALL, [new Publishers.BasicConsolePublisher()]);
 		
 		private static _rootLogger = new Logger(Manager._rootLoggerConfig); 
 		
