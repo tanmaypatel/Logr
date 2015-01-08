@@ -1,8 +1,8 @@
 {
   "name": "Logr",
   "version": "0.1.0",
-  "description": "A simple remote logging utility for JavaScript!",
-  "main": "index.js",
+  "description": "A 'configurable' logging utility for JavaScript!",
+  "main": "compiled/Logr.js",
   "scripts": {},
   "repository": {
     "type": "git",
@@ -14,14 +14,13 @@
     "url": "https://github.com/tanmaypatel/Logr/issues"
   },
   "homepage": "https://github.com/tanmaypatel/Logr",
-  "dependencies": {
-    "mocha": "^2.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^1.10.0",
     "grunt": "^0.4.5",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-typescript": "^0.4.8",
     "load-grunt-config": "^0.16.0",

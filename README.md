@@ -1,4 +1,4 @@
 Logr
 ====
 
-A simple remote logging utility for JavaScript!
+A *configurable* logging utility for JavaScript!
