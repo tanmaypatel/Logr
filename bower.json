@@ -1,0 +1,19 @@
+{
+  "name": "Logr",
+  "version": "0.1.0",
+  "homepage": "https://github.com/tanmaypatel/Logr",
+  "authors": [
+    "Tanmay Patel <me@tanmaypatel.com>"
+  ],
+  "description": "A 'configurable' logging utility for JavaScript!",
+  "main": "dist/Logr.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/components",
+    "test",
+    "tests"
+  ]
+}
